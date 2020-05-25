@@ -20,7 +20,6 @@ namespace Server
         Dictionary<string, string> database; 
         int port = 8005;
         Socket ListenSocket; 
-        Socket Handler; 
         IPEndPoint IPPoint; 
 
         List<Socket> list_socks;
@@ -150,16 +149,9 @@ namespace Server
                 list_socks[i].Close();
                 threads[i].Abort();
                 threads[i].Join(500);
-                try
-                {
-                    processes[i].Kill();
-                }
-                catch (Exception ex)
-                {
-
-                }
+                if (!processes[i].HasExited) processes[i].Kill();
             }
-            
+
             if (list_socks != null || threads != null || processes != null)
             {
                 list_socks.Clear();
@@ -187,8 +179,7 @@ namespace Server
                 prc.FileName = "C:\\Users\\Дамир\\Desktop\\os_lab_6\\Client\\bin\\Debug\\Client.exe";
                 prc.Arguments = (i + 1).ToString();
                 processes.Add(Process.Start(prc));
-                Handler = ListenSocket.Accept();
-                list_socks.Add(Handler);
+                list_socks.Add(ListenSocket.Accept());
                 thread_for_working_sock = new Thread(new ParameterizedThreadStart(ClientHandler));
                 thread_for_working_sock.Start(i);
                 threads.Add(thread_for_working_sock);
