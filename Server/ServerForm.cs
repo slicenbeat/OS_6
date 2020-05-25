@@ -217,14 +217,7 @@ namespace Server
                 list_socks[i].Close();
                 threads[i].Abort();
                 threads[i].Join(500);
-                try
-                {
-                    processes[i].Kill();
-                }
-                catch (Exception ex)
-                {
-                    
-                }
+                if (!processes[i].HasExited) processes[i].Kill();
             }
             count = 0;
             LogBox.Text += DateTime.Now.ToString("HH:mm:ss");
